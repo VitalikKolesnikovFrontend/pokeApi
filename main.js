@@ -1,0 +1,40 @@
+const pokeUrl = 'https://pokeapi.co/api/v2/pokemon/';
+const searchInput = document.querySelector('#search');
+const pokemonList = document.querySelector('.pokemon__list');
+const buttonNext = document.querySelector('#button-next');
+const buttonBack = document.querySelector('#button-back');
+
+function showError(message) {
+  pokemonList.innerHTML = `<p>${message}</p>`;
+}
+
+async function searchPokemon() {
+  const searchedPokemon = searchInput.value.toLowerCase();
+
+  try {
+    const response = await fetch(pokeUrl + searchedPokemon);
+    const data = await response.json();
+
+    if (!response.ok) {
+      showError('you entered the wrong name');
+      return;
+    }
+
+    pokemonList.innerHTML = `
+    <div class="pokemon-item">
+    <h2>${data.name.toUpperCase()}</h2>
+    <p>ID: ${data.id}</p>
+    <img src="${data.sprites.front_default}">
+    </div>
+    `;
+    buttonNext.addEventListener('click', () => {
+      console.log('hello!');
+    });
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+    showError('there was an error in the search...');
+  }
+}
+
+document.querySelector('#button-search').addEventListener('click', searchPokemon);
