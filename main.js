@@ -9,11 +9,12 @@ function showError(message) {
 }
 
 async function searchPokemon() {
-  const searchedPokemon = searchInput.value.toLowerCase();
+  let searchedPokemon = searchInput.value.toLowerCase();
 
   try {
-    const response = await fetch(pokeUrl + searchedPokemon);
-    const data = await response.json();
+    let response = await fetch(pokeUrl + searchedPokemon);
+    // const response = await fetch(pokeUrl + (+searchedPokemon + 1));
+    let data = await response.json();
 
     if (!response.ok) {
       showError('you entered the wrong name');
@@ -27,9 +28,59 @@ async function searchPokemon() {
     <img src="${data.sprites.front_default}">
     </div>
     `;
-    buttonNext.addEventListener('click', () => {
-      console.log('hello!');
-    });
+
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+    showError('there was an error in the search...');
+  }
+}
+async function nextPokemon() {
+  let searchedPokemon = searchInput.value.toLowerCase();
+
+  try {
+    let response = await fetch(pokeUrl + (+searchedPokemon + 1));
+    let data = await response.json();
+
+    if (!response.ok) {
+      showError('you entered the wrong name');
+      return;
+    }
+
+    pokemonList.innerHTML = `
+    <div class="pokemon-item">
+    <h2>${data.name.toUpperCase()}</h2>
+    <p>ID: ${data.id}</p>
+    <img src="${data.sprites.front_default}">
+    </div>
+    `;
+
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+    showError('there was an error in the search...');
+  }
+}
+async function backPokemon() {
+  let searchedPokemon = searchInput.value.toLowerCase();
+
+  try {
+    let response = await fetch(pokeUrl + (+searchedPokemon - 1));
+    let data = await response.json();
+
+    if (!response.ok) {
+      showError('you entered the wrong name');
+      return;
+    }
+
+    pokemonList.innerHTML = `
+    <div class="pokemon-item">
+    <h2>${data.name.toUpperCase()}</h2>
+    <p>ID: ${data.id}</p>
+    <img src="${data.sprites.front_default}">
+    </div>
+    `;
+
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -38,3 +89,5 @@ async function searchPokemon() {
 }
 
 document.querySelector('#button-search').addEventListener('click', searchPokemon);
+buttonNext.addEventListener('click', nextPokemon);
+buttonBack.addEventListener('click', backPokemon);
